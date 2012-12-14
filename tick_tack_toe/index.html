@@ -1,51 +1,92 @@
 <html>
-<style type="text/css">
-td {
-  border: 1px black solid;
-  width: 40px;
-  height: 40px;
-}</style>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" >
 </script>
 
 <script type="text/javascript">
-$(document).ready(ready);
+
+var board;
+
+
 
 var isXTurn = true;
 
-function cellClick (event){
-	console.log(this);
-	var text;
-	if(isXTurn){
-		text='X'
-	} else {
-		text='O'
-	}
-	this.append(text);
-	isXTurn = !isXTurn;
+$(document).ready(ready);
+
+function ready() {
+  initData();
+  initUi();  
+}
+ 
+function initData() {
+  var size = 3;
+  board = new Array(size);
+  for(var row = 0; row < board.length; row++) {
+    var rowData = new Array(size);
+    board[row] = rowData;
+  }
+}
+
+function initUi() {
+
+  var table = $('<table></table>');
+  
+  for(var row = 0; row < board.length; row++) {
+    var rowData = board[row];
+    var tr = $('<tr></tr>');
+
+    $(table).append(tr);
+    for (var col = 0; col < rowData.length; col++) {
+      var td = $('<td>&nbsp;</td>');
+      $(tr).append(td);
+      td.click(cellClicked);
+      td.data('row', row);
+      td.data('col', col);
+    }
+  }
+
+  $(document.body).append(table);
+}
+
+function cellClicked() {
+  var td = $(this);
+  onCellClick(td.data('row'), td.data('col'));
+}
+
+function onCellClick(row, col) {
+  if(board[row][col] == null){
+  	board[row][col] = isXTurn ? 1 : 2;
+  	isXTurn = !isXTurn;
+  	updateView();
+  }
+  
 
 }
-function ready(){
-	var table = $('<table></table>');
 
-	for ( var row = 0; row < 3; row++){
-		var tr = $('<tr></tr>');
-		$(table).append(tr);
-		for(var col = 0; col < 3; col++){
-			var td = $('<td>&nbsp</td>');
-			$(tr).append(td);
-			td.click(cellClick)
-		}
-	}
-	console.debug("we're ready");
-	$(document.body).append(table);
+function updateView() {
+  var table = $('table');
+
+  var rows = table.find('tr');
+  for(var row = 0; row < rows.length; row++) {
+    var rowElement = rows[row];
+    var cols = $(rowElement).find('td');
+    for(var col = 0; col < cols.length; col++) {
+      var cell = $(cols[col]);
+      var boardValue = board[row][col];
+      var cellString = '&nbsp;';
+      if(boardValue == 1) {
+        cellString = 'X';
+      } else if(boardValue == 2) {
+        cellString = 'O';
+      }
+      cell.html(cellString);
+    }
+  }
 }
 </script>
 
-
-	<body>
-		<h1>Tick-Tack-Toe</h1>
-
-	</body>
+</head>
+<body>
+</body>
 </html>
